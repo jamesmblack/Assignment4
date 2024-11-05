@@ -64,7 +64,7 @@ WHERE avg_film_length = (SELECT MAX(avg_film_length) FROM avg_length)
    OR avg_film_length = (SELECT MIN(avg_film_length) FROM avg_length);
    
 -- Problem 3: Which customers have rented action but not comedy or classic movies?
--- SATA Customers redux, 
+-- SATA Customers 2.
 
 WITH action_customers AS (
     -- Find customers who rented Action movies
@@ -106,8 +106,16 @@ JOIN language ON film.language_id = language.language_id
 WHERE language.name = 'English'
 GROUP BY actor.actor_id, actor.first_name, actor.last_name
 ORDER BY movie_count DESC;
+
 -- Problem 5: How many distinct movies were rented for exactly 10 days from the store where Mike works?
--- Find distinct movies and subtract the dates and find  
+SELECT COUNT(DISTINCT film.film_id) AS distinct_movie_count
+FROM rental
+JOIN inventory ON rental.inventory_id = inventory.inventory_id
+JOIN film ON inventory.film_id = film.film_id
+JOIN staff ON rental.staff_id = staff.staff_id
+JOIN store ON staff.store_id = store.store_id
+WHERE staff.first_name = 'Mike'  -- Employee named Mike
+  AND DATEDIFF(DATE(return_date), DATE(rental_date)) = 10;
 
 -- Problem 6: Alphabetically list actors who appeared in the movie with the largest cast of actors.
 -- -- First find the actor counts and limit it to 1 to have the one set of actors from the movie.
